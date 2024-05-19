@@ -125,7 +125,7 @@ const publicCall = ({ proxy, endpoints }) => (path, data, method = 'GET', header
   return sendResult(
     fetch(
       `${
-        path.includes('/papi') ? endpoints.portfolioMargin 
+        path.includes('/papi') ? endpoints.portfolio 
           : path.includes('/fapi') || path.includes('/futures')
           ? endpoints.futures
           : path.includes('/dapi')
@@ -199,7 +199,7 @@ const privateCall = ({
     return sendResult(
       fetch(
         `${
-          path.includes('/papi') ? endpoints.portfolioMargin 
+          path.includes('/papi') ? endpoints.portfolio 
             : path.includes('/fapi') || path.includes('/futures')
             ? endpoints.futures
             : path.includes('/dapi')
