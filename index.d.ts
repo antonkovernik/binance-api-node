@@ -627,6 +627,7 @@ declare module 'binance-api-node' {
     universalTransferHistory(
       options: UniversalTransferHistory,
     ): Promise<UniversalTransferHistoryResponse>
+    portfolioPing(): Promise<boolean>
     futuresPing(): Promise<boolean>
     futuresTime(): Promise<number>
     futuresExchangeInfo(): Promise<ExchangeInfo<FuturesOrderType_LT>>
@@ -666,6 +667,7 @@ declare module 'binance-api-node' {
       limit?: number
     }): Promise<FundingRateResult[]>
     futuresOrder(options: NewFuturesOrder): Promise<FuturesOrder>
+    portfolioUMOrder(options: NewFuturesOrder): Promise<FuturesOrder>
     futuresBatchOrders(options: {
       batchOrders: NewFuturesOrder[]
       recvWindow?: number
@@ -911,6 +913,17 @@ declare module 'binance-api-node' {
       callback: (msg: OutboundAccountInfo | ExecutionReport) => void,
     ) => Promise<ReconnectingWebSocketHandler>
     futuresUser: (
+      callback: (
+        msg:
+          | OutboundAccountInfo
+          | ExecutionReport
+          | AccountUpdate
+          | OrderUpdate
+          | AccountConfigUpdate
+          | MarginCall,
+      ) => void,
+    ) => Promise<ReconnectingWebSocketHandler>
+    portfolioUser: (
       callback: (
         msg:
           | OutboundAccountInfo
