@@ -8,6 +8,7 @@ import 'isomorphic-fetch'
 const BASE = 'https://api.binance.com'
 const FUTURES = 'https://fapi.binance.com'
 const COIN_FUTURES = 'https://dapi.binance.com'
+const PORTFOLIO = 'https://papi.binance.com'
 
 const defaultGetTime = () => Date.now()
 
@@ -15,6 +16,7 @@ const info = {
   spot: {},
   futures: {},
   delivery: {},
+  portfolio: {}
 }
 
 /**
@@ -123,7 +125,8 @@ const publicCall = ({ proxy, endpoints }) => (path, data, method = 'GET', header
   return sendResult(
     fetch(
       `${
-        path.includes('/fapi') || path.includes('/futures')
+        path.includes('/papi') ? endpoints.portfolioMargin 
+          : path.includes('/fapi') || path.includes('/futures')
           ? endpoints.futures
           : path.includes('/dapi')
           ? endpoints.delivery
@@ -196,7 +199,8 @@ const privateCall = ({
     return sendResult(
       fetch(
         `${
-          path.includes('/fapi') || path.includes('/futures')
+          path.includes('/papi') ? endpoints.portfolioMargin 
+            : path.includes('/fapi') || path.includes('/futures')
             ? endpoints.futures
             : path.includes('/dapi')
             ? endpoints.delivery
@@ -331,6 +335,7 @@ export default opts => {
     base: (opts && opts.httpBase) || BASE,
     futures: (opts && opts.httpFutures) || FUTURES,
     delivery: (opts && opts.httpDelivery) || COIN_FUTURES,
+    portfolio: (opts && opts.httpPortfolio) || PORTFOLIO,
   }
 
   const pubCall = publicCall({ ...opts, endpoints })
@@ -428,6 +433,11 @@ export default opts => {
     futuresCloseDataStream: payload =>
       privCall('/fapi/v1/listenKey', payload, 'DELETE', false, true),
 
+    portfolioGetDataStream: () => privCall('/papi/v1/listenKey', null, 'POST', true),
+    portfolioKeepDataStream: payload => privCall('/papi/v1/listenKey', payload, 'PUT', false, true),
+    portfolioCloseDataStream: payload =>
+      privCall('/papi/v1/listenKey', payload, 'DELETE', false, true),
+
     deliveryGetDataStream: () => privCall('/dapi/v1/listenKey', null, 'POST', true),
     deliveryKeepDataStream: payload => privCall('/dapi/v1/listenKey', payload, 'PUT', false, true),
     deliveryCloseDataStream: payload =>
@@ -454,6 +464,9 @@ export default opts => {
       privCall('/sapi/v1/margin/isolated/account', payload, 'DELETE'),
     enableMarginAccount: payload => privCall('/sapi/v1/margin/isolated/account', payload, 'POST'),
     getPortfolioMarginAccountInfo: () => privCall('/sapi/v1/portfolio/account'),
+
+    portfolioPing: () => pubCall('/papi/v1/ping').then(() => true),
+    portfolioUMOrder: payload => order(privCall, payload, '/papi/v1/um/order'),
 
     futuresPing: () => pubCall('/fapi/v1/ping').then(() => true),
     futuresTime: () => pubCall('/fapi/v1/time').then(r => r.serverTime),

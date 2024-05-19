@@ -8,6 +8,7 @@ const endpoints = {
   base: 'wss://stream.binance.com:9443/ws',
   futures: 'wss://fstream.binance.com/ws',
   delivery: 'wss://dstream.binance.com/ws',
+  portfolio: 'wss://fstream.binance.com/pm/ws'
 }
 
 const wsOptions = {}
@@ -864,7 +865,9 @@ const user = (opts, variator) => (cb, transform) => {
 
           w = openWebSocket(
             `${
-              variator === 'futures'
+              variator === 'portfolio' 
+                ? endpoints.portfolio 
+                : variator === 'futures'
                 ? endpoints.futures
                 : variator === 'delivery'
                 ? endpoints.delivery
@@ -980,6 +983,7 @@ export default opts => {
     futuresLiquidations,
     futuresAllLiquidations,
     futuresUser: user(opts, 'futures'),
+    portfolioUser: user(opts, 'portfolio'),
     deliveryUser: user(opts, 'delivery'),
     futuresCustomSubStream: (payload, cb) => customSubStream(payload, cb, 'futures'),
     deliveryCustomSubStream: (payload, cb) => customSubStream(payload, cb, 'delivery'),
