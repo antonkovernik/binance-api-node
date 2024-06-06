@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import zip from 'lodash.zipobject'
 import JSONbig from 'json-bigint'
 
@@ -8,7 +9,7 @@ const endpoints = {
   base: 'wss://stream.binance.com:9443/ws',
   futures: 'wss://fstream.binance.com/ws',
   delivery: 'wss://dstream.binance.com/ws',
-  portfolio: 'wss://fstream.binance.com/pm/ws'
+  portfolio: 'wss://fstream.binance.com/pm/ws',
 }
 
 const wsOptions = {}
@@ -771,9 +772,13 @@ const futuresUserTransforms = {
 
 export const userEventHandler = (cb, transform = true, variator) => msg => {
   const { e: type, ...rest } = JSONbig.parse(msg.data)
+  console.log('userEventHandler: ', type)
+  console.log('variator: ', variator)
+  console.log('transform: ', transform)
+  console.log('futuresUserTransforms[type]', futuresUserTransforms[type])
 
   cb(
-    variator === 'futures' || variator === 'delivery'
+    variator === 'futures' || variator === 'delivery' || variator === 'portfolio'
       ? transform && futuresUserTransforms[type]
         ? futuresUserTransforms[type](rest)
         : { type, ...rest }
@@ -865,8 +870,8 @@ const user = (opts, variator) => (cb, transform) => {
 
           w = openWebSocket(
             `${
-              variator === 'portfolio' 
-                ? endpoints.portfolio 
+              variator === 'portfolio'
+                ? endpoints.portfolio
                 : variator === 'futures'
                 ? endpoints.futures
                 : variator === 'delivery'

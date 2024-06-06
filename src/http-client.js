@@ -16,7 +16,7 @@ const info = {
   spot: {},
   futures: {},
   delivery: {},
-  portfolio: {}
+  portfolio: {},
 }
 
 /**
@@ -125,7 +125,8 @@ const publicCall = ({ proxy, endpoints }) => (path, data, method = 'GET', header
   return sendResult(
     fetch(
       `${
-        path.includes('/papi') ? endpoints.portfolio 
+        path.includes('/papi')
+          ? endpoints.portfolio
           : path.includes('/fapi') || path.includes('/futures')
           ? endpoints.futures
           : path.includes('/dapi')
@@ -199,7 +200,8 @@ const privateCall = ({
     return sendResult(
       fetch(
         `${
-          path.includes('/papi') ? endpoints.portfolio 
+          path.includes('/papi')
+            ? endpoints.portfolio
             : path.includes('/fapi') || path.includes('/futures')
             ? endpoints.futures
             : path.includes('/dapi')
@@ -467,6 +469,10 @@ export default opts => {
 
     portfolioPing: () => pubCall('/papi/v1/ping').then(() => true),
     portfolioUMOrder: payload => order(privCall, payload, '/papi/v1/um/order'),
+    portfolioUMCancelOrder: payload => privCall('/papi/v1/um/order', payload, 'DELETE'),
+    portfolioUMCancelAllOpenOrders: payload =>
+      privCall('/papi/v1/um/allOpenOrders', payload, 'DELETE'),
+    portfolioUMPositionRisk: payload => privCall('/papi/v1/um/positionRisk', payload),
 
     futuresPing: () => pubCall('/fapi/v1/ping').then(() => true),
     futuresTime: () => pubCall('/fapi/v1/time').then(r => r.serverTime),
