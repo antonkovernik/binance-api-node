@@ -924,10 +924,6 @@ var userEventHandler = function userEventHandler(cb) {
         type = _JSONbig$parse.e,
         rest = _objectWithoutProperties(_JSONbig$parse, _excluded);
 
-    console.log('userEventHandler: ', type);
-    console.log('variator: ', variator);
-    console.log('transform: ', transform);
-    console.log('futuresUserTransforms[type]', futuresUserTransforms[type]);
     cb(variator === 'futures' || variator === 'delivery' || variator === 'portfolio' ? transform && futuresUserTransforms[type] ? futuresUserTransforms[type](rest) : _objectSpread({
       type: type
     }, rest) : transform && userTransforms[type] ? userTransforms[type](rest) : _objectSpread({

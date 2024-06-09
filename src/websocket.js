@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import zip from 'lodash.zipobject'
 import JSONbig from 'json-bigint'
 
@@ -772,11 +771,6 @@ const futuresUserTransforms = {
 
 export const userEventHandler = (cb, transform = true, variator) => msg => {
   const { e: type, ...rest } = JSONbig.parse(msg.data)
-  console.log('userEventHandler: ', type)
-  console.log('variator: ', variator)
-  console.log('transform: ', transform)
-  console.log('futuresUserTransforms[type]', futuresUserTransforms[type])
-
   cb(
     variator === 'futures' || variator === 'delivery' || variator === 'portfolio'
       ? transform && futuresUserTransforms[type]
